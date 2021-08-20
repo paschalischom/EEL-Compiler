@@ -1,0 +1,28 @@
+/* Testing in and inout type parameters */
+// Expected result: c = 5
+//                  d = 10
+//                  a = 5
+//                  b = 11
+
+program procedureTest
+    declare a,b enddeclare
+
+    procedure p1(in x, inout b)
+        declare c,d enddeclare
+
+        c := x;
+        print c;
+        d := b;
+        print d;
+        a := a + 1;
+        b := b + 1;
+    endprocedure
+
+    a := 5;
+    b := 10;
+
+    call p1(in a, inout b);
+    
+    print a;
+    print b;
+endprogram

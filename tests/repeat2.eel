@@ -1,0 +1,28 @@
+/* Second repeat statement test. Two nested repeats with
+   different exit conditions. Each exit statement is correctly
+   redirecting the flow of the program. The program it self
+   counts up to 75 in 3 segments of 25 numbers then exits.      */
+// Expected Results: b: (1..25)  for a: 1
+//                   b: (26..50) for a: 2
+//                   b: (51..75) for a: 3
+program repeatStat2
+    declare a,b,c,d enddeclare
+    a := 0;
+    b := 0;
+    repeat
+        a := a + 1;
+        print a;
+        repeat
+            b := b + 1;
+            print b;
+            //c := b / 5;
+            //d := a * 5;
+            if b / 5 = a * 5 then
+                exit
+            endif     
+        endrepeat;
+        if a = 3 then
+            exit
+        endif
+    endrepeat
+endprogram

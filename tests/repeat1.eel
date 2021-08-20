@@ -1,0 +1,15 @@
+/* First repeat statement test, increments 'b' up to 10
+   and exits. Prints the value of 'b' along the way.	*/
+// Expected Results: 1,2,3,4,5,6,7,8,9,10
+program repeatStat1
+	declare a,b enddeclare
+	a := 1;
+	b := 0;
+	repeat
+		if b = 10 then
+			exit
+		endif;
+		b := b + a;
+		print b
+	endrepeat
+endprogram

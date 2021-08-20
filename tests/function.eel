@@ -1,0 +1,28 @@
+/* Testing in and inout type parameters as well the return statement */
+// Expected result: c = 5
+//                  d = 10
+//                  a = 6
+//                  b = 11
+program functionTest
+    declare a,b enddeclare
+
+    function p1(in a, inout b)
+        declare c,d enddeclare
+
+        c := a;
+        print c;
+        d := b;
+        print d;
+        a := a + 1;
+        b := b + 1;
+        return a
+    endfunction
+
+    a := 5;
+    b := 10;
+
+    a := p1(in a, inout b);
+    
+    print a;
+    print b;
+endprogram

@@ -1,0 +1,19 @@
+/* Forcase statement test which has two nested forcaseses (if thats a word).
+   The value of c is printed as it is incremented and reaches the value
+   of 15. The value of d is also incremented starting from 16 and reaching 20
+   inclusive.                                                                 */
+// Expected Results: c: (1..(16..20)..15)
+program forcaseStat
+    declare a,b,c,d enddeclare
+    a := 0;
+    b := 0;
+    c := 0;
+    d := 16;
+    forcase
+        when a < 5: c := c + 1; a := a + 1; print c;
+        forcase
+            when d <= 20: print d; d := d + 1
+        endforcase
+        when b < 10: c := c + 1; b := b + 1; print c
+    endforcase
+endprogram
