@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
-import string
+import os
 from enum import Enum
 from collections import OrderedDict
 import argparse
@@ -1904,26 +1904,37 @@ def printScopesToFile():
 
 def open_files(inputFile, intermOutputFile, cOutputFile, symtableOutputFile, asmOutputFile):
 	global infile, file_size, intoutfile, coutfile, symtablefile, asmfile
-	checkInputFile = inputFile.split('.')
-	if(str(checkInputFile[1]) != 'eel'):
+	checkInputFile = inputFile.replace('/', '.').split('.')
+	if(str(checkInputFile[-1]) != 'eel'):
+		print(str(checkInputFile[-1]))
 		print("Input file is not an EEL file.\nCan not parse.\nNow exiting...")
 		sys.exit()
 	with open(inputFile, mode= 'r', encoding='utf-8') as infile:
 		file_size = infile.seek(0,2)
 		file_size = infile.tell()
 		infile.seek(0)
+
+		resultsDir = './results/' + checkInputFile[-2] + '/'
+		try:
+			os.makedirs(resultsDir)
+		except FileExistsError:
+			pass
+		except OSError:
+			print ("Creation of the directory %s failed." % resultsDir)
+			sys.exit()
+
 		# Symbol table file
 		if (symtableOutputFile == None):
-			symtableOutputFile = checkInputFile[0]+'.txt'
+			symtableOutputFile = checkInputFile[-2]+'.txt'
 		else:
 			symtableOutputFile = symtableOutputFile.split('.')[0]+'.txt'
 		# Assembly file
-		symtablefile = open(symtableOutputFile, mode='w', encoding= 'utf-8')
+		symtablefile = open(resultsDir + symtableOutputFile, mode='w', encoding= 'utf-8')
 		if (asmOutputFile == None):
-			asmOutputFile = checkInputFile[0]+'.asm'
+			asmOutputFile = checkInputFile[-2]+'.asm'
 		else:
 			asmOutputFile = asmOutputFile.split('.')[0]+'.asm'
-		asmfile = open(asmOutputFile, mode='w', encoding='utf-8')
+		asmfile = open(resultsDir + asmOutputFile, mode='w', encoding='utf-8')
 		# Starting the parser
 
 		print('\t'+color.DARKCYAN+color.BOLD+"Syntax n' Semantic Analysis         "+color.END,end="",flush=True)
@@ -1939,15 +1950,15 @@ def open_files(inputFile, intermOutputFile, cOutputFile, symtableOutputFile, asm
 		print(color.GREEN+color.BOLD+"["+color.END+color.PURPLE+color.BOLD+" CREATING "+color.END+color.GREEN+color.BOLD+"]"+color.END,end='\r')
 		time.sleep(1)
 		if(intermOutputFile == None):
-			intermOutputFile = checkInputFile[0]+'.int'
+			intermOutputFile = checkInputFile[-2]+'.int'
 		else:
 			intermOutputFile = intermOutputFile.split('.')[0]+'.int'
-		intoutfile = open(intermOutputFile, mode= 'w', encoding = 'utf-8')
+		intoutfile = open(resultsDir + intermOutputFile, mode= 'w', encoding = 'utf-8')
 		if(cOutputFile == None):
-			cOutputFile = checkInputFile[0]+'.c'
+			cOutputFile = checkInputFile[-2]+'.c'
 		else:
 			cOutputFile = cOutputFile.split('.')[0]+'.c'
-		coutfile = open(cOutputFile, mode='w', encoding= 'utf-8')
+		coutfile = open(resultsDir + cOutputFile, mode='w', encoding= 'utf-8')
 
 def close_files():
 	intoutfile.close()
@@ -1963,7 +1974,7 @@ def close_files():
 
 
 info = color.BOLD+color.RED+'{:-^100}'.format('INFO')+color.END+'\n\n'+\
-	   color.UNDERLINE+color.BOLD+color.DARKCYAN+'{:^100}'.format('EEL Compiler v.1.0')+color.END+"\n\n"+\
+	   5*'\t'+color.UNDERLINE+color.BOLD+color.DARKCYAN+'EEL Compiler v.1.0 (2017)'+color.END+"\n\n"+\
 	   color.CYAN+color.BOLD+'Usage\n'+color.END+\
 	   color.BOLD+'1. '+'.\\Compiler.py -h:'+color.END+' Display help message and exit.\n'+\
 	   color.BOLD+'2. '+'.\\Compiler.py -v:'+color.END+' Display program\'s version and exit.\n'+\
@@ -2024,10 +2035,10 @@ def main():
 	argParser.add_argument('--info','-i',action = printInfo,\
 						   help = 'show info about the version, compiler usage and exit')
 	argParser.add_argument('inputF', metavar = '<inputFileName>', help = 'the .eel input file')
-	argParser.add_argument('--interm','-int',metavar='', nargs = "?", help = 'intermediate code\'s output file name')
-	argParser.add_argument('-c',metavar='', nargs='?', help = 'c code\'s output file name')
-	argParser.add_argument('-sym',metavar='', nargs='?', help = 'final code\'s output file name')
-	argParser.add_argument('-asm',metavar='', nargs='?', help = 'final code\'s output file name')
+	argParser.add_argument('--interm','-int',metavar='', nargs = "?", help = 'intermediate code output file name')
+	argParser.add_argument('-c',metavar='', nargs='?', help = 'c code output file name')
+	argParser.add_argument('-sym',metavar='', nargs='?', help = 'symbol table output file name')
+	argParser.add_argument('-asm',metavar='', nargs='?', help = 'assembly output file name')
 	args = vars(argParser.parse_args())
 	# Open files
 	open_files(args['inputF'],args['interm'],args['c'],args['sym'],args['asm'])
